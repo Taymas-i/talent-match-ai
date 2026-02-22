@@ -3,6 +3,7 @@ from app.database import get_db
 from sqlalchemy.orm import Session
 import app.models as models
 import app.schemas as schemas
+from app.services.scraper import JobScraper
 
 
 app = FastAPI(
@@ -21,6 +22,9 @@ def test_db_connection(db: Session = Depends(get_db)):
         "status": "Database connection successful!",
         "message" : "Connected to the PostgreSQL database without any issues"
     }
+
+
+# JOB ENDPOINTS
 
 @app.post("/jobs/", response_model=schemas.jobOut)
 def create_job(job: schemas.jobCreate, db: Session = Depends(get_db)):
@@ -54,5 +58,30 @@ def read_jobs(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     jobs = db.query(models.Job).filter(models.Job.is_active == True).offset(skip).limit(limit).all()
     return jobs
     
+
+# SCRAPER ENDPOINT
+
+@app.post("/scrape/python-org")
+def trigger_pythone_scraper(db: Session = Depends(get_db)):
+    """
+    Manually triggers the Python.org bot.
+    Pulls listings from the site and saves them to the database.
+    """
+    try:
+        # create worker given the current database session
+        bot = JobScraper(db)
+        
+        bot.scrape_pythone_org()
+
+        return {
+            "status": "success",
+            "message": "Python.org scraping completed and data saved to the database."
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred while scraping: {e}")
+
+
+
+
 
 
