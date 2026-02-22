@@ -55,3 +55,8 @@ class MatchOut(MatchBase):
 
     class Config:
         from_attributes = True
+
+# A small schema for our API to only accept text named cv_text from outside
+
+class CVMatchRequest(BaseModel):
+    cv_text: str

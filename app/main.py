@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 import app.models as models
 import app.schemas as schemas
 from app.services.scraper import JobScraper
+from app.services.matcher import NLPJobMatcher
 
 
 app = FastAPI(
@@ -79,6 +80,30 @@ def trigger_pythone_scraper(db: Session = Depends(get_db)):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred while scraping: {e}")
+    
+# NLP MATCHER ENDPOINT
+
+@app.post("/match/")
+def match_cv_to_jobs(request: schemas.CVMatchRequest, db: Session = Depends(get_db)):
+    """
+    Accepts a CV text and returns a list of job matches with their scores.
+    """
+    try:
+        matcher = NLPJobMatcher(db)
+        results = matcher.calculate_match_scores(request.cv_text)
+
+        return {
+            "status": "success",
+            "total_number_of_ads": len(results),
+            "matches": results
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred during matching: {e}")
+
+        
+    
+
+
 
 
 
