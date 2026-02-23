@@ -7,7 +7,7 @@ class NLPJobMatcher:
     def __init__(self, db: Session):
         #upload the huggingface model for sentence
         self.db = db
-        self.model = SentenceTransformer('all-MiniLM-L6-v2')
+        self.model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
 
     def calculate_match_scores(self, cv_text: str):
         
@@ -39,4 +39,6 @@ class NLPJobMatcher:
         match_results = sorted(match_results, key=lambda x: x['match_score'], reverse=True)
 
         return match_results
+    
+
 
