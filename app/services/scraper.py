@@ -52,18 +52,37 @@ class JobScraper:
                 if existing_job:
                     continue
 
+                # Deep scrape
+
+                try:
+                    detail_response = requests.get(link, headers=self.headers)
+                    detail_soup = BeautifulSoup(detail_response.content, 'html.parser')
+
+                    description_div = detail_soup.find('div', class_='job-description')
+
+                    if description_div:
+                        full_description = description_div.text.strip()
+                    else:
+                        full_description = "not found in detail page"
+                except Exception as e:
+                    full_description = "detail scrape failed"
+                    print(f"Error scraping job details from {link}: {e}")
+
+                time.sleep(random.uniform(1.0, 2.0))
+
+
                 new_job = Job(
                     title=title,
                     company=company_name,
                     location=location,
-                    description="Detaylar linkte", 
+                    description=full_description, # ARTIK GERÇEK METİN BURADA!
                     link=link,
                     source="Python.org"
                 )
                 self.db.add(new_job)
                 added_count += 1
 
-                time.sleep(random.uniform(0.1, 0.5))
+                
 
             self.db.commit()
             print(f"Added {added_count} new jobs from python.org")
