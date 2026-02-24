@@ -34,6 +34,7 @@ class NLPJobMatcher:
                 "job_id": job_ids[i],
                 "job_title": jobs[i].title,
                 "company": jobs[i].company,
+                "link": jobs[i].link,
                 "match_score": percentage_score
             })
         match_results = sorted(match_results, key=lambda x: x['match_score'], reverse=True)

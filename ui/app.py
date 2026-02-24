@@ -54,7 +54,10 @@ with col2:
                                 with st.expander(f"{title} - {company} (harmony: %{score})"):
                                     st.markdown(f"job ID: {job['job_id']}")
                                     st.markdown(f"**Match Score:** {score}%")
-                                    st.button("go to the advertisement", key=f"btn_{job['job_id']}", help = "will be active soon")
+                                    
+                                    job_link = job.get("link", "https://weworkremotely.com")
+                                    st.link_button("🔗 Go to Advertisement", url=job_link, use_container_width=True)
+
                     else:
                         st. error(f"API error (code: {response.status_code}): {response.text}")
                 except requests.exceptions.ConnectionError:

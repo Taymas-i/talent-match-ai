@@ -5,6 +5,7 @@ import app.models as models
 import app.schemas as schemas
 from app.services.scraper import JobScraper
 from app.services.matcher import NLPJobMatcher
+from app.services.scrapers.weworkremotely import WWRScraper
 
 
 app = FastAPI(
@@ -80,6 +81,23 @@ def trigger_pythone_scraper(db: Session = Depends(get_db)):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred while scraping: {e}")
+    
+
+# WeWorkRemotely Scraper Endpoint
+    
+@app.post("/scrape/weworkremotely")
+def trigger_wwr_scraper(db: Session = Depends(get_db)):
+    try:
+        bot = WWRScraper(db)
+        bot.scrape()
+        return {
+            "status": "success",
+            "message": "WeWorkRemotely scraping completed and data saved to the database."
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error scraping WeWorkRemotely: {str(e)}")
+
+
     
 # NLP MATCHER ENDPOINT
 
