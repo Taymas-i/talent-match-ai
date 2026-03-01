@@ -6,6 +6,8 @@ import app.schemas as schemas
 from app.services.scraper import JobScraper
 from app.services.matcher import NLPJobMatcher
 from app.services.scrapers.weworkremotely import WWRScraper
+from apscheduler.schedulers.background import BackgroundScheduler
+from app.database import sessionLocal
 
 
 app = FastAPI(
@@ -117,6 +119,30 @@ def match_cv_to_jobs(request: schemas.CVMatchRequest, db: Session = Depends(get_
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred during matching: {e}")
+    
+# scrap automatically nightly at 3:00 AM
+
+def run_night_shift_scraper():
+    print("[*] Night shift scraper is running...")
+    db = sessionLocal()
+    try:
+        bot = WWRScraper(db)
+        bot.scrape()
+    except Exception as e:
+        print(f"Error in night shift scraper: {e}")
+    finally:
+        db.close()
+
+@app.on_event("startup")
+def start_scheduler():
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(run_night_shift_scraper, 'cron', hour=3, minute=0)
+    scheduler.start()
+    print("[*] Scheduler started for night shift scraping.")
+
+    
+
+    
 
         
     
