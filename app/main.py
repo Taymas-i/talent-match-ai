@@ -3,7 +3,6 @@ from app.database import get_db
 from sqlalchemy.orm import Session
 import app.models as models
 import app.schemas as schemas
-from app.services.scraper import JobScraper
 from app.services.matcher import NLPJobMatcher
 from app.services.scrapers.weworkremotely import WWRScraper
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -63,28 +62,6 @@ def read_jobs(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return jobs
     
 
-# SCRAPER ENDPOINT
-
-@app.post("/scrape/python-org")
-def trigger_pythone_scraper(db: Session = Depends(get_db)):
-    """
-    Manually triggers the Python.org bot.
-    Pulls listings from the site and saves them to the database.
-    """
-    try:
-        # create worker given the current database session
-        bot = JobScraper(db)
-        
-        bot.scrape_pythone_org()
-
-        return {
-            "status": "success",
-            "message": "Python.org scraping completed and data saved to the database."
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"An error occurred while scraping: {e}")
-    
-
 # WeWorkRemotely Scraper Endpoint
     
 @app.post("/scrape/weworkremotely")
@@ -139,6 +116,21 @@ def start_scheduler():
     scheduler.add_job(run_night_shift_scraper, 'cron', hour=3, minute=0)
     scheduler.start()
     print("[*] Scheduler started for night shift scraping.")
+
+@app.post("/match/manual")
+def match_manual_job(request: schemas.ManualMatchRequest, db: Session = Depends(get_db)):
+
+    try:
+        matcher = NLPJobMatcher(db)
+        score = matcher.calculate_manual_match_score(request.cv_text, request.job_text)
+        return {
+            "status": "success",
+            "match_score": score,
+            "message": f"The CV and job description have a match score of {score}% based on NLP analysis."
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred during manual matching: {e}")
+
 
     
 

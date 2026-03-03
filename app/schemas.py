@@ -60,3 +60,7 @@ class MatchOut(MatchBase):
 
 class CVMatchRequest(BaseModel):
     cv_text: str
+
+class ManualMatchRequest(BaseModel):
+    cv_text: str
+    job_text: str 

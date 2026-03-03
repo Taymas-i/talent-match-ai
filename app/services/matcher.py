@@ -41,5 +41,15 @@ class NLPJobMatcher:
 
         return match_results
     
+    def calculate_manual_match_score(self, cv_text: str, job_text: str):
+        cv_embedding = self.model.encode([cv_text])
+        job_embedding = self.model.encode([job_text])
+
+        
+        similarity = cosine_similarity(cv_embedding, job_embedding)[0][0]
+        percentage_score = round(float(similarity) * 100, 2)
+
+        return percentage_score
+    
 
 
