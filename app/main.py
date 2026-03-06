@@ -6,6 +6,7 @@ import app.schemas as schemas
 from app.services.matcher import NLPJobMatcher
 from app.services.scrapers.weworkremotely import WWRScraper
 from apscheduler.schedulers.background import BackgroundScheduler
+from app.services.llm_analyzer import analyze_skill_gap
 from app.database import sessionLocal
 
 
@@ -119,18 +120,23 @@ def start_scheduler():
 
 @app.post("/match/manual")
 def match_manual_job(request: schemas.ManualMatchRequest, db: Session = Depends(get_db)):
-
     try:
         matcher = NLPJobMatcher(db)
         score = matcher.calculate_manual_match_score(request.cv_text, request.job_text)
+
+        llm_analysis = analyze_skill_gap(request.cv_text, request.job_text)
+
         return {
             "status": "success",
             "match_score": score,
-            "message": f"The CV and job description have a match score of {score}% based on NLP analysis."
+            "analysis": llm_analysis,
+            "message": "Analiz başarıyla tamamlandı."
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred during manual matching: {e}")
+    
 
+       
 
     
 
