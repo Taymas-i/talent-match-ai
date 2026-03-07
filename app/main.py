@@ -20,14 +20,6 @@ app = FastAPI(
 def read_root():
     return {"message": "Welcome to the TalentMatch AI API!"}
 
-@app.get("/db-test")
-def test_db_connection(db: Session = Depends(get_db)):
-    return {
-        "status": "Database connection successful!",
-        "message" : "Connected to the PostgreSQL database without any issues"
-    }
-
-
 # JOB ENDPOINTS
 
 @app.post("/jobs/", response_model=schemas.jobOut)

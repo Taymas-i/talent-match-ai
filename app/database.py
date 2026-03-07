@@ -7,14 +7,14 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-# Veritabanı ile iletişim kuran ana motor
+# The main engine communicating with the database
 engine = create_engine(DATABASE_URL)
-# Veritabanı üzerinde işlem yapmamızı (oturum açmamızı) sağlayan yapı
+# The structure that enables us to perform operations on the database (log in)
 sessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-# Tablolarımızı miras alacağımız temel sınıf
+# The base class we will inherit our tables from
 Base = declarative_base()
 
-# FastAPI'nin her istekte yeni bir DB oturumu açıp kapatması için gereken fonksiyon
+# The function required for FastAPI to open and close a new DB session for each request
 def get_db():
     db = sessionLocal()
     try:

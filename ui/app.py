@@ -9,7 +9,7 @@ st.set_page_config(page_title="TalentMatch AI", page_icon="🎯", layout="wide",
 
 st.markdown("""
     <style>
-        /* Açık renkli, modern ve temiz bir görünüm için temel ayarlar */
+        /**/
         .stButton>button {
             background-color: #2C3E50;
             color: white;
@@ -22,7 +22,7 @@ st.markdown("""
             background-color: #1A252F;
             box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
         }
-        /* Uyarı ve bilgi kutularını yumuşat */
+        /**/
         div.stAlert {
             border-radius: 8px;
             border: 1px solid rgba(0,0,0,0.05);
@@ -30,7 +30,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-#  CV Yükleme Alanı
+
 with st.sidebar:
     st.image("https://cdn-icons-png.flaticon.com/512/3135/3135679.png", width=60) 
     st.title("Profilinizi Oluşturun")

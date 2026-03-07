@@ -1,4 +1,3 @@
-# ui/document_parser.py
 import pdfplumber
 import docx
 

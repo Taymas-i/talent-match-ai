@@ -1,25 +1,20 @@
-# services/llm_analyzer.py
 import os
 import json
 from groq import Groq
 from dotenv import load_dotenv
 
-# .env dosyasını yükle
+
 load_dotenv()
 
-# API Key'i bul
 api_key = os.getenv("GROQ_API_KEY")
 
 if not api_key:
     raise ValueError("GROQ_API_KEY bulunamadı! Lütfen .env dosyanıza GROQ_API_KEY=anahtariniz şeklinde ekleme yapın.")
 
-# Groq İstemcisini Başlat
 client = Groq(api_key=api_key)
 
 def analyze_skill_gap(cv_text: str, job_text: str):
-    """
-    CV ve İş İlanını Groq (Llama 3.1) kullanarak analiz eder ve kesin JSON döner.
-    """
+
     prompt = f"""
     Sen kıdemli bir İnsan Kaynakları (ATS) ve Teknik İşe Alım uzmanısın.
     Aşağıda bir adayın CV'si ve başvurduğu İş İlanı metni verilmiştir.
@@ -42,7 +37,6 @@ def analyze_skill_gap(cv_text: str, job_text: str):
     """
 
     try:
-        # Groq API ile JSON Modunda istek atıyoruz
         chat_completion = client.chat.completions.create(
             messages=[
                 {
@@ -55,11 +49,10 @@ def analyze_skill_gap(cv_text: str, job_text: str):
                 }
             ],
             model="llama-3.1-8b-instant",
-            temperature=0.0, # Yaratıcılığı sıfırlıyoruz, matematiksel kesinlik istiyoruz
-            response_format={"type": "json_object"} # İŞTE BİZİ KURTARACAK OLAN SİHİRLİ ŞALTER
+            temperature=0.0, 
+            response_format={"type": "json_object"} 
         )
         
-        # Yanıtı doğrudan json.loads içine alabiliriz çünkü JSON Mode bunu garanti ediyor
         raw_text = chat_completion.choices[0].message.content
         return json.loads(raw_text)
         
