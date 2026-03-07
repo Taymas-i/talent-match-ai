@@ -51,7 +51,7 @@ elif cv_text_input:
 
 st.title("TalentMatch AI 🚀")
 st.markdown("#### Akıllı İş Eşleştirme ve Analiz Motoru")
-st.markdown("Aday özgeçmişleri ile iş ilanlarını anlamsal (semantic) olarak eşleştirir ve eksik yetenek analizi yapar.")
+st.markdown("Aday özgeçmişleri ile iş ilanlarını anlamsal olarak eşleştirir ve eksik yetenek analizi yapar.")
 st.divider()
 
 tab1, tab2 = st.tabs(["📊 Veritabanı Tarama", "🎯 Derinlemesine İlan Analizi"])
@@ -86,7 +86,7 @@ with tab1:
                                 emoji = "🟢" if score > 50 else ("🟡" if score > 30 else "🔴")
                                 
                                 with st.expander(f"{emoji} {job['job_title']} - {job['company']} (Uyum: %{score})"):
-                                    st.markdown(f"**Anlamsal Eşleşme Skoru:** `% {score}`")
+                                    st.markdown(f"**Eşleşme Skoru:** `% {score}`")
                                     st.link_button("🔗 Orijinal İlana Git", url=job.get("link", "#"))
                     else:
                         st.error(f"API Hatası: {response.status_code}")
